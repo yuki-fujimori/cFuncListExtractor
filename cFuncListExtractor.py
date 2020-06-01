@@ -19,6 +19,9 @@ def parse_from_file(input_file, funclist=set()):
            or line.find(":") > 0 : # ":" is to remove tag
             # ignore these lines
             pass
+        elif line.startswith("extern"): # remove extern to avoid duplicating in result
+            print(f"starts with extern:{line}")
+            line = line.strip("extern")
         else:
             #print(f"parse raw line: {line}")
             semicolon = line.find(";")
