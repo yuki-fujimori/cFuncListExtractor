@@ -98,11 +98,11 @@ def parse_from_file(input_file, funclist=set()):
 def parse_fake_file(input_file, fakelist=set()):
     line = input_file.readline()
     while line:
-        urt_str ="undefined reference to '"
+        urt_str ="undefined reference to `"
         urt =  line.find(urt_str)
         if urt >= 0:
             tmp = line[urt + len(urt_str):]
-            fake = tmp[0:tmp.find("(")]
+            fake = tmp[0:tmp.find("'")]
             fakelist.add(fake)
         line = input_file.readline()
         
