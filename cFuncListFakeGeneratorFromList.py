@@ -4,11 +4,17 @@
 # Also output REESET_FAKE list which can be used in SetUp() of test fixture
 
 import argparse
+import re
 
 class Arg:
     def __init__(self, name, arg_type):
         self.name = name
         self.type = arg_type
+
+class FuncPtrArg(Arg):
+    def __init__(self, name, arg_type, ret_type):
+        super(FuncPtrArg, self).__init__(name, arg_type)
+        self.ret_type = ret_type
 
 class Func:
     def __init__(self, name, ret_type, args):
@@ -17,14 +23,20 @@ class Func:
         self.args = args.copy() 
     def outputFakeSource(self):
         arg_str = ""
+        ret_str = ""
         for arg in self.args:
-            arg_str += arg.type
+            if type(arg) == FuncPtrArg:
+                arg_str += arg.name
+                ret_str += "typedef " + arg.ret_type + "(*" + arg.name + ") (" + arg.type + ");\n"
+            else:
+                arg_str += arg.type
             arg_str += ", "
         arg_str = arg_str.rstrip(", ")
         if self.ret_type == "void":
-            return "FAKE_VOID_FUNC(" + self.name + ", " + arg_str + ");\n"
+            ret_str += "FAKE_VOID_FUNC(" + self.name + ", " + arg_str + ");\n"
         else:
-            return "FAKE_VALUE_FUNC(" + self.ret_type + ", "  + self.name + ", " + arg_str + ");\n"
+            ret_str += "FAKE_VALUE_FUNC(" + self.ret_type + ", "  + self.name + ", " + arg_str + ");\n"
+        return ret_str
     def outputResetFake(self):
         return "RESET_FAKE(" + self.name + ");\n"
     
@@ -49,10 +61,8 @@ def parse_from_file(input_file, funclist=set()):
         after = ""
         for blk in blocks[1:]:
             after = after + blk + "("
-        after = after.rstrip("(")
-        after = after.rstrip("\n")
-        after = after.rstrip(")")
-        #print(f"before:{before} \nafter:{after}")
+        after = after[0:-3]
+        print(f"before:{before} \nafter:{after}")
 
         #separate befor to ret_type & func_name
         before_blks = before.split(" ")
@@ -70,6 +80,24 @@ def parse_from_file(input_file, funclist=set()):
         #print(f"ret_type: {ret_type}")
 
         #separate after to list of Arg class[arg_type & arg_name]
+        fpa_list = []
+        if after.find("("):
+            # it contains a function ponter arg
+            # ex.) int (*func)(int, int), int a
+            args_blks = re.split("[()]", after)
+            for i, blk in enumerate(args_blks):
+                if blk.startswith("*"): # func pointer name found
+                    arg_name = blk.strip("*")
+                    name_index = i
+                    arg_type = args_blks[i + 2] # args_blks[i + 1] is a space
+                    tmp = args_blks[i - 1].split(",")
+                    ret_type = tmp[-1]
+                    fpa = FuncPtrArg(arg_name, arg_type, ret_type)
+                    fpa_list.append(fpa)
+                    # replace func pointer arg with "fpa"
+                    after = after.replace(ret_type + "(*" + arg_name + ")(" + arg_type +")", "fpa")
+                    print(f"replaced:{after}")
+
         args_blks = after.split(",")
         for arg in args_blks:
             arg_blks = arg.split(" ")
@@ -87,7 +115,10 @@ def parse_from_file(input_file, funclist=set()):
             arg_type = arg_type.strip(" ")
             #print(f"arg_type: {arg_type}")
             
-            tmp_arg = Arg(arg_name, arg_type)
+            if arg_name == "fpa":
+                tmp_arg = fpa_list.pop(0)
+            else:
+                tmp_arg = Arg(arg_name, arg_type)
             arglist.append(tmp_arg)
         
         # append Func class to funclist
