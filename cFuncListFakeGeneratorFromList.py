@@ -95,7 +95,7 @@ def parse_from_file(input_file, funclist=set()):
         funclist.add(tmp_func)
         arglist.clear()
 
-def parse_fake_file(input_file, fakelist=[]):
+def parse_fake_file(input_file, fakelist=set()):
     line = input_file.readline()
     while line:
         urt_str ="undefined reference to '"
