@@ -6,18 +6,28 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description= "argParser")
 
     parser.add_argument('inputDirectory', help = 'input directory path')
+    parser.add_argument('depth', help = 'target subdirectory depth')
     args = parser.parse_args()
 
-    files = glob.glob(args.inputDirectory + "/**/*.c") # sub directories
-    cd_files = glob.glob(args.inputDirectory + "/*.c") # Current directory 
-    for file in cd_files:
-        files.append(file)
-    file_set = set(files) # remove if duplicated files are in the list
+    file_set = set() 
+    for i in range(int(args.depth)):
+        depth_str = "/**"
+        files = glob.glob(args.inputDirectory + depth_str * i + "/*.c")
+        for file in files:
+            file_set.add(file)
+
     for file in file_set:
-        funclist = []
+        print(file)
+    
+    funcset = set()
+    for file in file_set:
+        funclist = set() 
         with open(file) as input_file:
             cFuncListExtractor.parse_from_file(input_file, funclist)
 
-        with open("./output.txt", 'a+') as output_file:
-            for func in funclist:
-                output_file.write(func + '\n')
+        for func in funclist:
+            funcset.add(func) # remove duplicate here
+    
+    with open("./filelist.txt", 'w') as output_file:
+        for func in funcset:
+            output_file.write(func + '\n')
