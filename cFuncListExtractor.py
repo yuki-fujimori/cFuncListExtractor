@@ -25,7 +25,7 @@ def parse_from_file(input_file, funclist=set()):
         else:
             #print(f"parse raw line: {line}")
             semicolon = line.find(";")
-            end = line.find(")")
+            end = line.rfind(")") # find from the end to deal with function pointer argument correctly
         
             # find till there are ";" or ")". If no ";" or ")" concatenate the line with next line
             while semicolon < 0 and end < 0:
@@ -34,7 +34,7 @@ def parse_from_file(input_file, funclist=set()):
                 #print(f"[{count}]")
                 line = line.strip('\n') + line_cont
                 semicolon = line.find(";")
-                end = line.find(")")
+                end = line.rfind(")")
 
             # ignore only semicolon line (it is not a function)        
             #print(f"parse joined line: {line}")
