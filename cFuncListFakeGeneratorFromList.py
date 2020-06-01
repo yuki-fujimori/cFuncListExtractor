@@ -28,7 +28,7 @@ class Func:
     def outputResetFake(self):
         return "RESET_FAKE(" + self.name + ");\n"
     
-def parse_from_file(input_file, funclist=[]):
+def parse_from_file(input_file, funclist=set()):
     arglist = []
     line = " "
     count = 0
@@ -92,7 +92,7 @@ def parse_from_file(input_file, funclist=[]):
         
         # append Func class to funclist
         tmp_func = Func(func_name, ret_type, arglist)
-        funclist.append(tmp_func)
+        funclist.add(tmp_func)
         arglist.clear()
 
 def parse_fake_file(input_file, fakelist=[]):
@@ -103,7 +103,7 @@ def parse_fake_file(input_file, fakelist=[]):
         if urt >= 0:
             tmp = line[urt + len(urt_str):]
             fake = tmp[0:tmp.find("(")]
-            fakelist.append(fake)
+            fakelist.add(fake)
         line = input_file.readline()
         
 
@@ -115,11 +115,11 @@ if __name__ == '__main__':
     parser.add_argument('outputFile', help = 'output file path(Fake Output file)')
     args = parser.parse_args()
 
-    funclist = []
+    funclist = set() 
     with open(args.inputFile) as input_file:
         parse_from_file(input_file, funclist)
 
-    fakelist = []
+    fakelist = set() 
     with open(args.inputFakeFile) as input_file:
         parse_fake_file(input_file, fakelist)
     

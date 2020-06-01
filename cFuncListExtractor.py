@@ -3,7 +3,7 @@
 
 import argparse
 
-def parse_from_file(input_file, funclist=[]):
+def parse_from_file(input_file, funclist=set()):
     line = " "
     count = 0 # to know which line we are parsing
     while line:
@@ -42,7 +42,7 @@ def parse_from_file(input_file, funclist=[]):
                     pass # do not include static func in list
                 else:
                     #print(f'{line[0:end + 1]} is func')
-                    funclist.append(line[0:end + 1])
+                    funclist.add(line[0:end + 1])
     print(funclist)
         
 
@@ -53,7 +53,7 @@ if __name__ == '__main__':
     parser.add_argument('outputFile', help = 'output file path')
     args = parser.parse_args()
 
-    funclist = []
+    funclist = set() 
     with open(args.inputFile) as input_file:
         parse_from_file(input_file, funclist)
 
