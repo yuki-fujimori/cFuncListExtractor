@@ -38,8 +38,8 @@ def parse_from_file(input_file, funclist=set()):
         if not line:
             break
         count += 1
-        print(f"[{count}]")
-        print(f"parse raw line: {line}")
+        #print(f"[{count}]")
+        #print(f"parse raw line: {line}")
 
         # separate line to tow block
         # before: ret_type func_name
@@ -52,7 +52,7 @@ def parse_from_file(input_file, funclist=set()):
         after = after.rstrip("(")
         after = after.rstrip("\n")
         after = after.rstrip(")")
-        print(f"before:{before} \nafter:{after}")
+        #print(f"before:{before} \nafter:{after}")
 
         #separate befor to ret_type & func_name
         before_blks = before.split(" ")
@@ -61,13 +61,13 @@ def parse_from_file(input_file, funclist=set()):
         if func_name.startswith("*"):
             func_name = func_name.strip("*")
             pointer_flag = True
-        print(f"func_name: {func_name}")
+        #print(f"func_name: {func_name}")
         ret_type = ""
         for blk in before_blks[0:-1]:
             ret_type = ret_type + blk + " "
         if pointer_flag == True:
             ret_type += "*"
-        print(f"ret_type: {ret_type}")
+        #print(f"ret_type: {ret_type}")
 
         #separate after to list of Arg class[arg_type & arg_name]
         args_blks = after.split(",")
@@ -78,14 +78,14 @@ def parse_from_file(input_file, funclist=set()):
             if arg_name.startswith("*"):
                 arg_name = arg_name.strip("*")
                 pointer_flag = True
-            print(f"arg_name: {arg_name}")
+            #print(f"arg_name: {arg_name}")
             arg_type = ""
             for blk in arg_blks[0:-1]:
                 arg_type = arg_type + blk + " "
             if pointer_flag == True:
                 arg_type += "*"
             arg_type = arg_type.strip(" ")
-            print(f"arg_type: {arg_type}")
+            #print(f"arg_type: {arg_type}")
             
             tmp_arg = Arg(arg_name, arg_type)
             arglist.append(tmp_arg)
