@@ -15,8 +15,8 @@ def parse_from_file(input_file, funclist=set()):
         #print(f"[{count}]")
         #print(f"input line: {line}")
         if line.startswith(" ") or line.startswith("\t") or line.startswith("/") or line.startswith("#") \
-           or line.startswith("\n") or line.startswith("{") or line.startswith("}") \
-           or line.find(":") > 0: # ":" is to remove tag
+           or line.startswith("\n") or line.startswith("{") or line.startswith("}") or line.startswith("*")\
+           or line.find(":") > 0 : # ":" is to remove tag
             # ignore these lines
             pass
         else:
