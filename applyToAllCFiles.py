@@ -28,6 +28,6 @@ if __name__ == '__main__':
         for func in funclist:
             funcset.add(func) # remove duplicate here
     
-    with open("./filelist.txt", 'w') as output_file:
+    with open("./funclist.txt", 'w') as output_file:
         for func in funcset:
             output_file.write(func + '\n')
